@@ -1,0 +1,7 @@
+# Ignore user-uploaded media but keep the folder structure
+assets/images/*
+!assets/images/default_thumb.jpg
+
+# Ignore system files
+.DS_Store
+Thumbs.db
