@@ -37,7 +37,7 @@ if (session_status() === PHP_SESSION_NONE) {
                         <li><a href="admin_dashboard.php" style="color: #ec4899; font-weight: bold;"><i class="fa-solid fa-chart-line"></i> Admin Panel</a></li>
                     <?php endif; ?>
 
-                    <li><a href="community.php">Community</a></li>
+                    <a href="community.php">Community</a>
                 </ul>
             </nav>
         </div>
