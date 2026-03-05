@@ -9,6 +9,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $name = htmlspecialchars(trim($_POST['full_name']));
         $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
         $password = $_POST['password'];
+
+        // STRICT SECURITY: Enforce minimum length on the server
+        if (strlen($password) < 8) {
+            header("Location: ../register.php?error=password_too_short");
+            exit;
+        }
+
         $password_hash = password_hash($password, PASSWORD_BCRYPT);
 
         try {
@@ -16,7 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $check_stmt->execute([$email]);
 
             if ($check_stmt->rowCount() > 0) {
-                die("Email already exists.");
+                header("Location: ../register.php?error=email_exists");
+                exit;
             }
 
             $insert_sql = "INSERT INTO users (full_name, email, password_hash) VALUES (?, ?, ?)";
@@ -32,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // --- NEW: LOGIN LOGIC ---
+
     if (isset($_POST['action']) && $_POST['action'] == 'login') {
         $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
         $password = $_POST['password'];
@@ -45,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // 2. Verify if user exists AND the password matches the hash
             if ($user && password_verify($password, $user['password_hash'])) {
-                // 3. SUCCESS: Create the session variables (The "VIP Pass")
+
                 // 3. SUCCESS: Create the session variables
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['user_name'] = $user['full_name'];
@@ -55,9 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: ../dashboard.php");
                 exit;
             } else {
-                // ARCHITECT RULE: Never tell them IF the email was wrong OR the password was wrong. 
-                // Just say "Invalid credentials" to prevent email harvesting.
-                die("Invalid credentials. Please try again.");
+
+                header("Location: ../login.php?error=invalid_credentials");
+                exit;
             }
         } catch (PDOException $e) {
             die("Login failed: " . $e->getMessage());

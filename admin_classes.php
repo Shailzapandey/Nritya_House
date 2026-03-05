@@ -48,6 +48,7 @@ include_once 'includes/header.php';
                     <input type="text" name="title" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                 </div>
 
+
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; font-weight: bold; margin-bottom: 5px;">Instructor Name</label>
                     <input type="text" name="instructor" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
@@ -65,8 +66,8 @@ include_once 'includes/header.php';
                 </div>
 
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Difficulty Level</label>
-                    <select name="difficulty_level" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Course Difficulty Level</label>
+                    <select name="difficulty_level" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
                         <option value="Beginner">Beginner</option>
                         <option value="Intermediate">Intermediate</option>
                         <option value="Advanced">Advanced</option>
@@ -117,12 +118,20 @@ include_once 'includes/header.php';
                                 </span>
                             </td>
                             <td style="padding: 10px;">
-                                <form action="actions/delete_class.php" method="POST" onsubmit="return confirm('WARNING: Are you sure you want to delete this class? This will instantly erase all student enrollments and progress for this course. This cannot be undone.');">
-                                    <input type="hidden" name="class_id" value="<?php echo $class['class_id']; ?>">
-                                    <button type="submit" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">
-                                        <i class="fa-solid fa-trash"></i> Delete
-                                    </button>
-                                </form>
+                                <div style="display: flex; gap: 10px; justify-content: flex-start;">
+
+                                    <a href="admin_edit_class.php?id=<?php echo $class['class_id']; ?>" style="background: #3b82f6; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">
+                                        <i class="fa-solid fa-pen"></i> Edit
+                                    </a>
+
+                                    <form action="actions/delete_class.php" method="POST" style="margin: 0;">
+                                        <input type="hidden" name="class_id" value="<?php echo $class['class_id']; ?>">
+                                        <button type="submit" style="background: #ef4444; color: white; padding: 6px 12px; border: none; border-radius: 4px; font-size: 0.85rem; font-weight: bold; cursor: pointer;" onclick="return confirm('CRITICAL WARNING: Deleting this class will permanently erase all student progress and enrollments associated with it. Do you want to proceed?');">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>

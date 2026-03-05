@@ -6,62 +6,73 @@ require_once 'config/database.php';
 include_once 'includes/header.php';
 
 // 3. THE LOGIC (Backend)
-// We write a SQL query to select everything from the classes table
-$sql = "SELECT * FROM classes";
+if (isset($_SESSION['user_id'])) {
+    // Logged In: Run the Recommendation Engine
+    $user_id = $_SESSION['user_id'];
+    $level_stmt = $pdo->prepare("SELECT experience_level FROM users WHERE user_id = ?");
+    $level_stmt->execute([$user_id]);
+    $user_level = $level_stmt->fetchColumn();
 
-// We prepare and execute the query securely using our $pdo connection
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-
-// We fetch all the rows and store them in a PHP array called $courses
+    $sql = "SELECT *, (difficulty_level = ?) AS is_recommended FROM classes ORDER BY is_recommended DESC, class_id DESC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$user_level]);
+} else {
+    // Guest User: Standard chronological catalog
+    $sql = "SELECT *, 0 AS is_recommended FROM classes ORDER BY class_id DESC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+}
 $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 <div class="container">
     <h2 style="margin-bottom: 30px;">Course Catalog</h2>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 20px;">
+    <div class="course-grid">
         <?php foreach ($courses as $course): ?>
-            <div class="card" style="background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden;">
+            <div class="course-card">
 
-                <?php
-                $thumb_path = !empty($course['thumbnail_url']) ? 'assets/images/' . $course['thumbnail_url'] : 'assets/images/default_thumb.jpg';
-                ?>
-                <img src="<?php echo htmlspecialchars($thumb_path); ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" style="width: 100%; height: 200px; object-fit: cover; background: #e5e7eb;">
+                <?php $thumb_path = !empty($course['thumbnail_url']) ? 'assets/images/' . $course['thumbnail_url'] : 'assets/images/default_thumb.jpg'; ?>
+                <img src="<?php echo htmlspecialchars($thumb_path); ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" class="course-thumb">
 
-                <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
+                <div class="course-content">
 
-                    <span style="background: #a855f7; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; width: fit-content; margin-bottom: 10px;">
-                        <?php echo htmlspecialchars($course['difficulty_level']); ?>
-                    </span>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                        <?php if ($course['is_recommended'] == 1): ?>
+                            <span class="badge badge-recommend"><i class="fa-solid fa-star"></i> Recommended</span>
+                        <?php endif; ?>
 
-                    <h3 style="margin: 0 0 5px 0;"><?php echo htmlspecialchars($course['title']); ?></h3>
-                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Instructor: <?php echo htmlspecialchars($course['instructor']); ?></p>
+                        <?php
+                        $lvl_class = 'badge-beginner';
+                        if ($course['difficulty_level'] == 'Intermediate') $lvl_class = 'badge-intermediate';
+                        if ($course['difficulty_level'] == 'Advanced') $lvl_class = 'badge-advanced';
+                        ?>
+                        <span class="badge <?php echo $lvl_class; ?>"><?php echo htmlspecialchars($course['difficulty_level']); ?></span>
+                    </div>
 
-                    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; font-size: 0.85rem; color: #444;">
-                        <span>Style: <?php echo htmlspecialchars($course['style']); ?></span>
-                        <span><?php echo htmlspecialchars($course['duration_min']); ?> min</span>
+                    <h3 style="margin: 0 0 10px 0; font-size: 1.25rem;"><?php echo htmlspecialchars($course['title']); ?></h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                        <i class="fa-solid fa-chalkboard-user"></i> <?php echo htmlspecialchars($course['instructor']); ?>
+                    </p>
+
+                    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
+                        <span><i class="fa-solid fa-music"></i> <?php echo htmlspecialchars($course['style']); ?></span>
+                        <span><i class="fa-regular fa-clock"></i> <?php echo htmlspecialchars($course['duration_min']); ?> min</span>
                     </div>
 
                     <div style="margin-top: auto;">
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <form action="actions/enroll.php" method="POST">
                                 <input type="hidden" name="class_id" value="<?php echo $course['class_id']; ?>">
-                                <button type="submit" style="width: 100%; padding: 10px; background: #a855f7; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                                    Enroll Now
-                                </button>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">Enroll Now</button>
                             </form>
                         <?php else: ?>
-                            <a href="login.php" style="display: block; text-align: center; width: 100%; padding: 10px; background: #e5e7eb; color: #4b5563; text-decoration: none; border-radius: 4px; font-weight: bold;">
-                                Log in to Enroll
-                            </a>
+                            <a href="login.php" class="btn" style="background: #f3f4f6; color: var(--text-dark); width: 100%;">Log in to Enroll</a>
                         <?php endif; ?>
                     </div>
 
                 </div>
             </div>
         <?php endforeach; ?>
-
     </div>
     <?php
     // 6. ERROR HANDLING

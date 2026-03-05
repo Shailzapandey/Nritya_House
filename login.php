@@ -1,9 +1,9 @@
-<?php 
+<?php
 require_once 'config/database.php';
-include_once 'includes/header.php'; 
+include_once 'includes/header.php';
 
 // If they are already logged in, redirect them away from the login page
-if(isset($_SESSION['user_id'])) {
+if (isset($_SESSION['user_id'])) {
     header("Location: dashboard.php");
     exit;
 }
@@ -11,7 +11,12 @@ if(isset($_SESSION['user_id'])) {
 
 <div class="container" style="max-width: 400px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
     <h2 style="text-align: center; margin-bottom: 20px;">Welcome Back</h2>
-    
+    <?php if (isset($_GET['error']) && $_GET['error'] == 'invalid_credentials'): ?>
+        <div style="background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; border: 1px solid #f87171;">
+            Invalid email or password. Please try again.
+        </div>
+    <?php endif; ?>
+
     <form action="actions/auth_process.php" method="POST">
         <input type="hidden" name="action" value="login">
 
@@ -27,7 +32,7 @@ if(isset($_SESSION['user_id'])) {
 
         <button type="submit" style="width: 100%; padding: 10px; background: #a855f7; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">Log In</button>
     </form>
-    
+
     <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
         Don't have an account? <a href="register.php" style="color: #a855f7; text-decoration: none;">Sign up</a>
     </p>

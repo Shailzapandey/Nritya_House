@@ -1,28 +1,36 @@
 /* assets/css/style.css */
 
 :root {
+  /* Color Palette matching the mockups */
   --primary: #a855f7;
+  --secondary: #ec4899;
   --primary-gradient: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
-  --bg-light: #fdf4ff;
+  --bg-main: #faf5ff;
+  --bg-card: #ffffff;
   --text-dark: #1f2937;
-  --text-gray: #6b7280;
-  --white: #ffffff;
-  --radius: 12px;
+  --text-muted: #6b7280;
+
+  /* UI Elements */
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 50px;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
 body {
-  background-color: #f9fafb;
+  background-color: var(--bg-main);
   color: var(--text-dark);
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Keeps footer at the bottom */
+  min-height: 100vh;
 }
 
 .container {
@@ -31,11 +39,11 @@ body {
   padding: 0 20px;
 }
 
-/* Navigation Shell */
+/* --- NAVIGATION --- */
 header {
-  background: var(--white);
+  background: var(--bg-card);
   padding: 15px 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -62,24 +70,166 @@ nav {
   display: flex;
   gap: 30px;
   list-style: none;
+  align-items: center;
 }
 
 .nav-links a {
   text-decoration: none;
-  color: var(--text-gray);
-  font-weight: 500;
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
   transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
-  color: #d946ef;
+.nav-links a:hover {
+  color: var(--primary);
 }
 
-/* Footer Shell */
+/* --- MODERN UTILITY CLASSES --- */
+.text-gradient {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 28px;
+  border-radius: var(--radius-lg);
+  font-weight: bold;
+  font-size: 1rem;
+  text-decoration: none;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  cursor: pointer;
+  border: none;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary {
+  background: var(--primary-gradient);
+  color: white;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+/* --- LAYOUTS --- */
+.hero-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+  padding: 60px 0;
+}
+
+.hero-content h1 {
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.hero-image img {
+  width: 100%;
+  border-radius: 24px;
+  box-shadow: var(--shadow-md);
+}
+
+/* --- FOOTER --- */
 footer {
   background-color: #0f172a;
   color: #94a3b8;
   padding: 40px 0 20px;
-  margin-top: auto; /* Pushes footer to bottom */
+  margin-top: auto;
+}
+/* --- COURSE CARDS --- */
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.course-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.course-thumb {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  background: #f3f4f6;
+}
+
+.course-content {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: bold;
+  width: fit-content;
+}
+
+.badge-beginner {
+  background: #dcfce7;
+  color: #166534;
+}
+.badge-intermediate {
+  background: #fef08a;
+  color: #854d0e;
+}
+.badge-advanced {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.badge-recommend {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: 0 2px 4px rgba(168, 85, 247, 0.3);
 }

@@ -14,15 +14,17 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'];
 // --- THE LEVEL ASSESSMENT CHOKE-POINT ---
-// Note: Verify if your primary key column in the users table is 'id' or 'user_id' and update the WHERE clause if necessary.
-$level_check = $pdo->prepare("SELECT experience_level FROM users WHERE user_id = ?");
-$level_check->execute([$user_id]);
-$user_level = $level_check->fetchColumn();
+// Guard clause: Only force the assessment if the user is NOT an admin
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    $level_check = $pdo->prepare("SELECT experience_level FROM users WHERE user_id = ?");
+    $level_check->execute([$user_id]);
+    $user_level = $level_check->fetchColumn();
 
-if (empty($user_level)) {
-    // The user has no level assigned. Force them to the assessment.
-    header("Location: assessment.php");
-    exit;
+    if (empty($user_level)) {
+        // The student has no level assigned. Force them to the assessment.
+        header("Location: assessment.php");
+        exit;
+    }
 }
 try {
     // 1. Fetch Enrolled Classes
