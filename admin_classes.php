@@ -123,6 +123,9 @@ include_once 'includes/header.php';
                                     <a href="admin_edit_class.php?id=<?php echo $class['class_id']; ?>" style="background: #3b82f6; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">
                                         <i class="fa-solid fa-pen"></i> Edit
                                     </a>
+                                    <a href="admin_add_lesson.php?class_id=<?php echo $class['class_id']; ?>" style="background: #10b981; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">
+                                        <i class="fa-solid fa-plus"></i> Add Lesson
+                                    </a>
 
                                     <form action="actions/delete_class.php" method="POST" style="margin: 0;">
                                         <input type="hidden" name="class_id" value="<?php echo $class['class_id']; ?>">

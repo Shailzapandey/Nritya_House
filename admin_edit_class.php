@@ -17,7 +17,6 @@ if (!isset($_GET['id'])) {
 $class_id = $_GET['id'];
 
 try {
-    // Note: Verify if your primary key is 'class_id' or 'id' in the classes table
     $stmt = $pdo->prepare("SELECT * FROM classes WHERE class_id = ?");
     $stmt->execute([$class_id]);
     $course = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -37,6 +36,7 @@ include_once 'includes/header.php';
 
     <form action="actions/edit_class_process.php" method="POST">
         <input type="hidden" name="class_id" value="<?php echo htmlspecialchars($course['class_id']); ?>">
+        <input type="hidden" name="original_last_updated" value="<?php echo htmlspecialchars($course['last_updated'] ?? ''); ?>">
 
         <div style="margin-bottom: 15px;">
             <label style="display: block; font-weight: bold; margin-bottom: 5px;">Course Title</label>

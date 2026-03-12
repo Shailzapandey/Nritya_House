@@ -61,12 +61,9 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     <div style="margin-top: auto;">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                            <form action="actions/enroll.php" method="POST">
-                                <input type="hidden" name="class_id" value="<?php echo $course['class_id']; ?>">
-                                <button type="submit" class="btn btn-primary" style="width: 100%;">Enroll Now</button>
-                            </form>
+                            <a href="lesson.php?class_id=<?php echo $course['class_id']; ?>" class="btn btn-primary" style="width: 100%;">Go to Course</a>
                         <?php else: ?>
-                            <a href="login.php" class="btn" style="background: #f3f4f6; color: var(--text-dark); width: 100%;">Log in to Enroll</a>
+                            <a href="lesson.php?class_id=<?php echo $course['class_id']; ?>" class="btn btn-outline" style="width: 100%;">Start Free Preview</a>
                         <?php endif; ?>
                     </div>
 

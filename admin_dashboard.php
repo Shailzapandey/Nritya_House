@@ -44,6 +44,9 @@ include_once 'includes/header.php';
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
         <h2>System Analytics Overview</h2>
         <a href="admin_classes.php" style="padding: 8px 16px; background: #ec4899; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">Manage Catalog</a>
+        <a href="admin_users.php" class="btn btn-outline" style="margin-right: 15px;">
+            <i class="fa-solid fa-users"></i> Manage Users
+        </a>
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">

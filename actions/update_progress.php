@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['class_id'])) {
         $log_stmt->execute([$user_id]);
 
         // Send them back to the lesson page to see the updated percentage
-        header("Location: ../lesson.php?id=" . $class_id);
+        header("Location: ../lesson.php?class_id=" . $class_id);
         exit;
     } catch (PDOException $e) {
         die("Failed to update progress: " . $e->getMessage());

@@ -37,6 +37,8 @@ if (session_status() === PHP_SESSION_NONE) {
                     <?php endif; ?>
 
                     <a href="community.php">Community</a>
+                    <li><a href="profile.php"><i class="fa-solid fa-user"></i> Profile</a></li>
+                    <li><a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
                 </ul>
             </nav>
         </div>

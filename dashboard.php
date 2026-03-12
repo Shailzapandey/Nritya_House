@@ -127,7 +127,7 @@ include_once 'includes/header.php';
                         <p style="color: #666; font-size: 0.9rem;">Instructor: <?php echo htmlspecialchars($course['instructor']); ?></p>
 
                         <div style="margin-top: auto;">
-                            <a href="lesson.php?id=<?php echo $course['class_id']; ?>" style="display: block; text-align: center; width: 100%; padding: 10px; margin-top: 15px; background: #22c55e; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">
+                            <a href="lesson.php?class_id=<?php echo $course['class_id']; ?>" style="display: block; text-align: center; width: 100%; padding: 10px; margin-top: 15px; background: #22c55e; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">
                                 <i class="fa-solid fa-play"></i> Continue Learning
                             </a>
                         </div>
