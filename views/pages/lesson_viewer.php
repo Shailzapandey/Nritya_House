@@ -1,71 +1,6 @@
-<?php
-// lesson.php (MASTER INTEGRATED VERSION)
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once 'config/database.php';
-
-
-
-if (!isset($_GET['class_id'])) {
-    die("Error: No class selected.");
-}
-$class_id = $_GET['class_id'];
-
-try {
-    // 2. Query 1: Fetch the Course Container details
-    $stmt_course = $pdo->prepare("SELECT title FROM classes WHERE class_id = ?");
-    $stmt_course->execute([$class_id]);
-    $course = $stmt_course->fetch(PDO::FETCH_ASSOC);
-
-    if (!$course) die("Course not found.");
-
-    // 3. Query 2: Fetch the Syllabus (One-to-Many Relational Query)
-    $stmt_lessons = $pdo->prepare("SELECT * FROM lessons WHERE class_id = ? ORDER BY order_index ASC");
-    $stmt_lessons->execute([$class_id]);
-    $lessons = $stmt_lessons->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    die("Database Error: " . $e->getMessage());
-}
-
-// 4. The Active Lesson Engine
-$active_lesson = null;
-if (!empty($lessons)) {
-    if (isset($_GET['lesson_id'])) {
-        $lesson_id = $_GET['lesson_id'];
-        foreach ($lessons as $lesson) {
-            if ($lesson['lesson_id'] == $lesson_id) {
-                $active_lesson = $lesson;
-                break;
-            }
-        }
-    }
-    if (!$active_lesson) {
-        $active_lesson = $lessons[0];
-    }
-}
-
-// 5. Master YouTube ID Extractor (Immune to dirty database URLs)
-$youtube_video_id = '';
-if ($active_lesson && !empty($active_lesson['video_url'])) {
-    $url = $active_lesson['video_url'];
-    // Industry-standard regex to capture exactly 11 characters, regardless of the link format
-    preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})%i', $url, $match);
-
-    if (isset($match[1])) {
-        $youtube_video_id = $match[1];
-    } else {
-        // Absolute fallback just in case
-        $parts = explode('/', rtrim($url, '/'));
-        $youtube_video_id = end($parts);
-    }
-}
-
-include_once 'includes/header.php';
-?>
+<?php include_once __DIR__ . '/../../includes/header.php'; ?>
 
 <div class="container" style="max-width: 1200px; margin: 40px auto;">
-
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
 
         <div style="grid-column: span 2;">
@@ -79,13 +14,7 @@ include_once 'includes/header.php';
                     <?php endif; ?>
                 </h3>
 
-                <?php
-                // THE FREEMIUM LOGIC ENGINE
-                $is_guest = !isset($_SESSION['user_id']);
-                $is_preview = ($active_lesson['order_index'] == 1);
-
-                if (!$is_guest || $is_preview):
-                ?>
+                <?php if ($canWatch): ?>
                     <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); background: #000; margin-bottom: 15px;">
                         <div id="video-transform-wrapper" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: transform 0.3s ease;">
                             <div id="youtube-api-player" style="width: 100%; height: 100%;"></div>
@@ -107,12 +36,9 @@ include_once 'includes/header.php';
                         <i class="fa-solid fa-lock" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
                         <h2 style="margin-bottom: 15px;">Unlock the Full Syllabus</h2>
                         <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 25px; max-width: 400px; margin-left: auto; margin-right: auto;">
-                            You have completed the free preview. Create a free account to track your progress and access the rest of this course.
+                            Create a free account or purchase this course to unlock the full syllabus.
                         </p>
-                        <a href="register.php" class="btn btn-primary" style="font-size: 1.1rem; padding: 12px 30px;">Create Free Account</a>
-                        <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);">
-                            Already have an account? <a href="login.php" style="color: var(--primary); font-weight: bold; text-decoration: none;">Log in</a>
-                        </p>
+                        <a href="<?php echo BASE_URL; ?>/auth/register" class="btn btn-primary" style="font-size: 1.1rem; padding: 12px 30px;">Create Free Account</a>
                     </div>
                 <?php endif; ?>
 
@@ -130,12 +56,11 @@ include_once 'includes/header.php';
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                     <?php foreach ($lessons as $lesson): ?>
                         <?php
-                        // UI Logic: Highlight the currently playing video
                         $is_active = ($active_lesson && $active_lesson['lesson_id'] == $lesson['lesson_id']);
                         $bg_color = $is_active ? 'var(--bg-main)' : 'transparent';
                         $border_color = $is_active ? 'var(--primary)' : '#e5e7eb';
                         ?>
-                        <a href="lesson.php?class_id=<?php echo $class_id; ?>&lesson_id=<?php echo $lesson['lesson_id']; ?>"
+                        <a href="<?php echo BASE_URL; ?>/lesson/view?class_id=<?php echo $course['class_id']; ?>&lesson_id=<?php echo $lesson['lesson_id']; ?>"
                             style="text-decoration: none; color: var(--text-dark); display: flex; align-items: center; gap: 15px; padding: 12px; border: 1px solid <?php echo $border_color; ?>; border-radius: var(--radius-md); background: <?php echo $bg_color; ?>; transition: 0.2s;">
 
                             <div style="background: <?php echo $is_active ? 'var(--primary-gradient)' : '#f3f4f6'; ?>; color: <?php echo $is_active ? 'white' : 'var(--text-muted)'; ?>; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 0.9rem; flex-shrink: 0;">
@@ -156,13 +81,11 @@ include_once 'includes/header.php';
 </div>
 
 <script>
-    // 1. Load the YouTube IFrame Player API asynchronously
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // 2. Initialize Player
     var player;
 
     function onYouTubeIframeAPIReady() {
@@ -179,29 +102,18 @@ include_once 'includes/header.php';
         }
     }
 
-    // 3. Mirror Logic
     let isMirrored = false;
 
     function toggleMirror() {
         const wrapper = document.getElementById('video-transform-wrapper');
         const btn = document.getElementById('btn-mirror');
-
         if (!wrapper || !btn) return;
-
         isMirrored = !isMirrored;
-
-        if (isMirrored) {
-            wrapper.style.transform = 'scaleX(-1)';
-            btn.style.background = 'var(--primary)';
-            btn.style.color = 'white';
-        } else {
-            wrapper.style.transform = 'scaleX(1)';
-            btn.style.background = 'transparent';
-            btn.style.color = 'var(--primary)';
-        }
+        wrapper.style.transform = isMirrored ? 'scaleX(-1)' : 'scaleX(1)';
+        btn.style.background = isMirrored ? 'var(--primary)' : 'transparent';
+        btn.style.color = isMirrored ? 'white' : 'var(--primary)';
     }
 
-    // 4. Speed Control Logic
     function setSpeed(rate) {
         if (player && typeof player.setPlaybackRate === 'function') {
             player.setPlaybackRate(rate);
@@ -209,4 +121,4 @@ include_once 'includes/header.php';
     }
 </script>
 
-<?php include_once 'includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../../includes/footer.php'; ?>

@@ -1,29 +1,5 @@
-<?php
-// 1. Bring in the database connection
-require_once 'config/database.php';
+<?php include_once __DIR__ . '/../../includes/header.php'; ?>
 
-// 2. Bring in the top UI shell
-include_once 'includes/header.php';
-
-// 3. THE LOGIC (Backend)
-if (isset($_SESSION['user_id'])) {
-    // Logged In: Run the Recommendation Engine
-    $user_id = $_SESSION['user_id'];
-    $level_stmt = $pdo->prepare("SELECT experience_level FROM users WHERE user_id = ?");
-    $level_stmt->execute([$user_id]);
-    $user_level = $level_stmt->fetchColumn();
-
-    $sql = "SELECT *, (difficulty_level = ?) AS is_recommended FROM classes ORDER BY is_recommended DESC, class_id DESC";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$user_level]);
-} else {
-    // Guest User: Standard chronological catalog
-    $sql = "SELECT *, 0 AS is_recommended FROM classes ORDER BY class_id DESC";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-}
-$courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
 <div class="container">
     <h2 style="margin-bottom: 30px;">Course Catalog</h2>
 
@@ -32,7 +8,7 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="course-card">
 
                 <?php $thumb_path = !empty($course['thumbnail_url']) ? 'assets/images/' . $course['thumbnail_url'] : 'assets/images/default_thumb.jpg'; ?>
-                <img src="<?php echo htmlspecialchars($thumb_path); ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" class="course-thumb">
+                <img src="<?php echo BASE_URL . '/' . htmlspecialchars($thumb_path); ?>" alt="<?php echo htmlspecialchars($course['title']); ?>" class="course-thumb">
 
                 <div class="course-content">
 
@@ -61,9 +37,9 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     <div style="margin-top: auto;">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                            <a href="lesson.php?class_id=<?php echo $course['class_id']; ?>" class="btn btn-primary" style="width: 100%;">Go to Course</a>
+                            <a href="<?php echo BASE_URL; ?>/lesson/view?class_id=<?php echo $course['class_id']; ?>" class="btn btn-primary" style="width: 100%;">Go to Course</a>
                         <?php else: ?>
-                            <a href="lesson.php?class_id=<?php echo $course['class_id']; ?>" class="btn btn-outline" style="width: 100%;">Start Free Preview</a>
+                            <a href="<?php echo BASE_URL; ?>/lesson?class_id=<?php echo $course['class_id']; ?>" class="btn btn-outline" style="width: 100%;">Start Free Preview</a>
                         <?php endif; ?>
                     </div>
 
@@ -71,18 +47,11 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         <?php endforeach; ?>
     </div>
-    <?php
-    // 6. ERROR HANDLING
-    // What if the database is empty? We tell the user.
-    if (count($courses) === 0) {
-        echo "<p>No classes are currently available.</p>";
-    }
-    ?>
+
+    <?php if (count($courses) === 0): ?>
+        <p>No classes are currently available.</p>
+    <?php endif; ?>
 
 </div>
-</div>
 
-<?php
-// 7. Bring in the bottom UI shell
-include_once 'includes/footer.php';
-?>
+<?php include_once __DIR__ . '/../../includes/footer.php'; ?>

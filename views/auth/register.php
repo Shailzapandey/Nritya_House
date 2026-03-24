@@ -22,9 +22,8 @@ if (isset($_SESSION['user_id'])) {
             </div>
         <?php endif; ?>
     <?php endif; ?>
-    <form action="actions/auth_process.php" method="POST">
-
-        <input type="hidden" name="action" value="register">
+    <form action="<?php echo BASE_URL; ?>/auth/processRegister" method="POST">
+        <?php echo \App\Core\Security::csrfField(); ?>
 
         <div style="margin-bottom: 15px;">
             <label style="display: block; margin-bottom: 5px; font-weight: 500;">Full Name</label>

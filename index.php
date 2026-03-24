@@ -1,35 +1,58 @@
 <?php
-// 1. Include the Database connection (if you need it on the home page)
-require_once 'config/database.php';
+// index.php - The Front Controller
 
-// 2. Include the Top Shell
-include_once 'includes/header.php';
-?>
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.use_only_cookies', 1);
+    session_start();
+    // Define the global Base URL for all links and assets
+    define('BASE_URL', '/Nritya_House');
+}
 
-<div class="container">
-    <div class="hero-section">
+function loadEnv($path)
+{
+    if (!file_exists($path)) return;
+    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        list($name, $value) = explode('=', $line, 2);
+        putenv(trim($name) . "=" . trim($value));
+        $_SERVER[trim($name)] = trim($value);
+    }
+}
+// ... (Environment loader code above)
+loadEnv(__DIR__ . '/.env');
 
-        <div class="hero-content">
-            <h1 class="text-gradient">Welcome to Nritya House</h1>
-            <p>Learn dance from world-class instructors. Join live sessions or explore our extensive video library.</p>
+// --- THE AUTOLOADER ---
+// This automatically finds and requires your classes so you don't have to.
+spl_autoload_register(function ($class) {
+    $prefix = 'App\\';
+    $base_dir = __DIR__ . '/app/';
 
-            <div class="hero-buttons">
-                <a href="classes.php" class="btn btn-primary">
-                    <i class="fa-solid fa-play"></i> Start Learning
-                </a>
-                <a href="live_classes.php" class="btn btn-outline">
-                    <i class="fa-regular fa-star"></i> Join Live Class
-                </a>
-            </div>
-        </div>
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
 
-        <div class="hero-image">
-            <img src="assets/images/default_thumb.jpg" alt="Dancers performing">
-        </div>
+    $relative_class = substr($class, $len);
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 
-    </div>
-</div>
-<?php
-// 3. Include the Bottom Shell
-include_once 'includes/footer.php';
-?>
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+// ----------------------
+
+// Load Core Components (We no longer strictly need these requires if they are correctly namespaced, but keep them for now)
+require_once __DIR__ . '/app/Core/Database.php';
+require_once __DIR__ . '/app/Core/Security.php';
+require_once __DIR__ . '/app/Core/Router.php';
+
+// ... (Rest of index.php below)
+// Global CSRF Protection Check for all POST requests
+\App\Core\Security::verifyCsrf();
+
+// Boot the Router
+$url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : 'home';
+$router = new \App\Core\Router();
+$router->dispatch($url);
