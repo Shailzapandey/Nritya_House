@@ -16,8 +16,10 @@ class Enrollment
 
     public function getUserEnrollments($userId)
     {
-        $sql = "SELECT c.* FROM classes c 
+        $sql = "SELECT c.*, i.full_name as instructor_name 
+                FROM classes c 
                 INNER JOIN enrollments e ON c.class_id = e.class_id 
+                LEFT JOIN instructors i ON c.instructor_id = i.instructor_id
                 WHERE e.user_id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$userId]);

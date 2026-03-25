@@ -28,14 +28,15 @@ if (session_status() === PHP_SESSION_NONE) {
                     <li><a href="<?php echo BASE_URL; ?>/home">Home</a></li>
 
                     <li><a href="<?php echo BASE_URL; ?>/course">Classes</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/instructor">Instructors</a></li>
                     <li><a href="<?php echo BASE_URL; ?>/community">Community</a></li>
 
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <li><a href="<?php echo BASE_URL; ?>/dashboard">Dashboard</a></li>
 
                         <?php if ($_SESSION['role'] === 'admin'): ?>
-                            <li><a href="<?php echo BASE_URL; ?>/admin_dashboard" style="color: #ec4899; font-weight: bold;">
-                                    <i class="fa-solid fa-chart-line"></i> Admin Panel
+                            <li><a href="<?php echo BASE_URL; ?>/admin/courses" style="color: #ec4899; font-weight: bold;">
+                                    <i class="fa-solid fa-shield-halved"></i> Admin Panel
                                 </a></li>
                         <?php endif; ?>
 

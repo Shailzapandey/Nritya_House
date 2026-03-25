@@ -52,7 +52,7 @@
 
                     <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
                         <h3 style="margin-top: 0;"><?php echo htmlspecialchars($course['title']); ?></h3>
-                        <p style="color: #666; font-size: 0.9rem;">Instructor: <?php echo htmlspecialchars($course['instructor']); ?></p>
+                        <p style="color: #666; font-size: 0.9rem;">Instructor: <?php echo htmlspecialchars($course['instructor_name']); ?>
 
                         <div style="margin-top: auto;">
                             <a href="<?php echo BASE_URL; ?>/lesson/view?class_id=<?php echo $course['class_id']; ?>" style="display: block; text-align: center; width: 100%; padding: 10px; margin-top: 15px; background: #22c55e; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">

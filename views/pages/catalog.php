@@ -27,7 +27,7 @@
 
                     <h3 style="margin: 0 0 10px 0; font-size: 1.25rem;"><?php echo htmlspecialchars($course['title']); ?></h3>
                     <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
-                        <i class="fa-solid fa-chalkboard-user"></i> <?php echo htmlspecialchars($course['instructor']); ?>
+                        <i class="fa-solid fa-chalkboard-user"></i> <?php echo htmlspecialchars($course['instructor_name']); ?>
                     </p>
 
                     <div style="margin-bottom: 20px; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">

@@ -42,10 +42,28 @@ class LessonController
             }
         }
 
-        // Access Control Logic (Freemium & Future Paywall)
+        // --- MASTER ACCESS CONTROL LOGIC ---
         $is_guest = !isset($_SESSION['user_id']);
-        $is_preview = ($active_lesson && $active_lesson['order_index'] == 1);
-        $canWatch = (!$is_guest || $is_preview);
+        $lesson_order = $active_lesson ? $active_lesson['order_index'] : 1;
+
+        $has_purchased = false;
+        if (!$is_guest) {
+            $paymentModel = new \App\Models\Payment();
+            $has_purchased = $paymentModel->hasPurchased($_SESSION['user_id'], $classId);
+        }
+
+        // Rule 1: Guests only see video 1.
+        // Rule 2: Logged in users get videos 1 & 2 for free.
+        // Rule 3: Video 3 and beyond require a purchase record.
+        if ($is_guest) {
+            $canWatch = ($lesson_order == 1);
+        } else {
+            if ($lesson_order <= 2) {
+                $canWatch = true;
+            } else {
+                $canWatch = $has_purchased;
+            }
+        }
 
         // YouTube ID Extractor
         $youtube_video_id = '';

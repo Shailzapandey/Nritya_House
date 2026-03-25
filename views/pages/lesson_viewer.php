@@ -1,6 +1,13 @@
 <?php include_once __DIR__ . '/../../includes/header.php'; ?>
 
 <div class="container" style="max-width: 1200px; margin: 40px auto;">
+
+    <?php if (isset($_GET['msg']) && $_GET['msg'] == 'purchase_success'): ?>
+        <div style="background: #dcfce7; color: #166534; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #bbf7d0; text-align: center; font-weight: bold;">
+            <i class="fa-solid fa-circle-check"></i> Payment successful! You now have full lifetime access to this course.
+        </div>
+    <?php endif; ?>
+
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
 
         <div style="grid-column: span 2;">
@@ -36,9 +43,21 @@
                         <i class="fa-solid fa-lock" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
                         <h2 style="margin-bottom: 15px;">Unlock the Full Syllabus</h2>
                         <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 25px; max-width: 400px; margin-left: auto; margin-right: auto;">
-                            Create a free account or purchase this course to unlock the full syllabus.
+                            <?php if (!isset($_SESSION['user_id'])): ?>
+                                Create a free account to access additional free lessons and track your progress.
+                            <?php else: ?>
+                                You have reached the end of the free lessons. Purchase this course to unlock lifetime access to all premium materials.
+                            <?php endif; ?>
                         </p>
-                        <a href="<?php echo BASE_URL; ?>/auth/register" class="btn btn-primary" style="font-size: 1.1rem; padding: 12px 30px;">Create Free Account</a>
+
+                        <?php if (!isset($_SESSION['user_id'])): ?>
+                            <a href="<?php echo BASE_URL; ?>/auth/register" class="btn btn-primary" style="font-size: 1.1rem; padding: 12px 30px;">Create Free Account</a>
+                            <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-muted);">
+                                Already have an account? <a href="<?php echo BASE_URL; ?>/auth/login" style="color: var(--primary); font-weight: bold; text-decoration: none;">Log in</a>
+                            </p>
+                        <?php else: ?>
+                            <a href="<?php echo BASE_URL; ?>/checkout?class_id=<?php echo $course['class_id']; ?>" class="btn btn-primary" style="font-size: 1.1rem; padding: 12px 30px;"><i class="fa-solid fa-cart-shopping"></i> Purchase Full Course - $49.99</a>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
 
@@ -59,12 +78,25 @@
                         $is_active = ($active_lesson && $active_lesson['lesson_id'] == $lesson['lesson_id']);
                         $bg_color = $is_active ? 'var(--bg-main)' : 'transparent';
                         $border_color = $is_active ? 'var(--primary)' : '#e5e7eb';
+
+                        // Visual cue for locked lessons
+                        $is_locked_item = false;
+                        if (!isset($_SESSION['user_id']) && $lesson['order_index'] > 1) {
+                            $is_locked_item = true;
+                        } elseif (isset($_SESSION['user_id']) && $lesson['order_index'] > 2 && empty($has_purchased)) {
+                            // Note: $has_purchased needs to be passed from the Controller
+                            $is_locked_item = true;
+                        }
                         ?>
                         <a href="<?php echo BASE_URL; ?>/lesson/view?class_id=<?php echo $course['class_id']; ?>&lesson_id=<?php echo $lesson['lesson_id']; ?>"
-                            style="text-decoration: none; color: var(--text-dark); display: flex; align-items: center; gap: 15px; padding: 12px; border: 1px solid <?php echo $border_color; ?>; border-radius: var(--radius-md); background: <?php echo $bg_color; ?>; transition: 0.2s;">
+                            style="text-decoration: none; color: <?php echo $is_locked_item ? 'var(--text-muted)' : 'var(--text-dark)'; ?>; display: flex; align-items: center; gap: 15px; padding: 12px; border: 1px solid <?php echo $border_color; ?>; border-radius: var(--radius-md); background: <?php echo $bg_color; ?>; transition: 0.2s; <?php echo $is_locked_item ? 'opacity: 0.7;' : ''; ?>">
 
                             <div style="background: <?php echo $is_active ? 'var(--primary-gradient)' : '#f3f4f6'; ?>; color: <?php echo $is_active ? 'white' : 'var(--text-muted)'; ?>; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 0.9rem; flex-shrink: 0;">
-                                <?php echo htmlspecialchars($lesson['order_index']); ?>
+                                <?php if ($is_locked_item): ?>
+                                    <i class="fa-solid fa-lock" style="font-size: 0.8rem;"></i>
+                                <?php else: ?>
+                                    <?php echo htmlspecialchars($lesson['order_index']); ?>
+                                <?php endif; ?>
                             </div>
                             <div style="font-weight: <?php echo $is_active ? '600' : '400'; ?>; line-height: 1.3;">
                                 <?php echo htmlspecialchars($lesson['lesson_title']); ?>
@@ -81,6 +113,7 @@
 </div>
 
 <script>
+    // YouTube API Logic
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -102,6 +135,7 @@
         }
     }
 
+    // Video Transform Logic
     let isMirrored = false;
 
     function toggleMirror() {
