@@ -1,28 +1,4 @@
-<?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once 'config/database.php';
-
-// Guard Clause: Only logged-in users get a profile
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
-
-$user_id = $_SESSION['user_id'];
-
-try {
-    // Fetch current user data
-    $stmt = $pdo->prepare("SELECT full_name, email, experience_level FROM users WHERE user_id = ?");
-    $stmt->execute([$user_id]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    die("Database Error: " . $e->getMessage());
-}
-
-include_once 'includes/header.php';
-?>
+<?php include_once __DIR__ . '/../../includes/header.php'; ?>
 
 <div class="container" style="max-width: 600px; margin: 40px auto; background: var(--bg-card); padding: 30px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
     <h2 style="margin-bottom: 20px; border-bottom: 2px solid var(--bg-main); padding-bottom: 10px;">My Profile</h2>
@@ -43,7 +19,9 @@ include_once 'includes/header.php';
         <p style="font-size: 1.1rem; font-weight: 500;"><?php echo htmlspecialchars($user['email']); ?></p>
     </div>
 
-    <form action="actions/update_profile.php" method="POST">
+    <form action="<?php echo BASE_URL; ?>/profile/update" method="POST">
+        <?php echo \App\Core\Security::csrfField(); ?>
+
         <div style="margin-bottom: 25px;">
             <label style="display: block; font-weight: bold; margin-bottom: 10px;">Dance Experience Level</label>
             <select name="experience_level" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: var(--radius-md); font-size: 1rem;">
@@ -57,4 +35,4 @@ include_once 'includes/header.php';
     </form>
 </div>
 
-<?php include_once 'includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../../includes/footer.php'; ?>

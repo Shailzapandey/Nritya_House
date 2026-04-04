@@ -104,6 +104,8 @@ class AdminController
 
         $courseModel = new \App\Models\Course();
         if ($courseModel->create($title, $instructorId, $difficulty, $style, $duration, $thumbUrl)) {
+            $notifModel = new \App\Models\Notification();
+            $notifModel->broadcast("New Course Dropped: " . $title . "!", "/course");
             header("Location: " . BASE_URL . "/admin/courses?msg=course_added");
             exit;
         } else {
@@ -276,6 +278,117 @@ class AdminController
         $lessonModel->delete($lessonId);
 
         header("Location: " . BASE_URL . "/admin/manageSyllabus?id=" . $classId . "&msg=lesson_deleted");
+        exit;
+    }
+    // Route: /admin/toggleUserRole
+    public function toggleUserRole()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/admin/users");
+            exit;
+        }
+
+        \App\Core\Security::verifyCsrf();
+
+        $target_user_id = $_POST['target_user_id'] ?? '';
+        $current_role = $_POST['current_role'] ?? '';
+        $acting_admin_id = $_SESSION['user_id'];
+
+        // The Self-Lockout Safeguard
+        if ($target_user_id == $acting_admin_id && $current_role === 'admin') {
+            header("Location: " . BASE_URL . "/admin/users?error=self_demotion");
+            exit;
+        }
+
+        $new_role = ($current_role === 'admin') ? 'student' : 'admin';
+
+        $stmt = $this->db->prepare("UPDATE users SET role = ? WHERE user_id = ?");
+        $stmt->execute([$new_role, $target_user_id]);
+
+        header("Location: " . BASE_URL . "/admin/users?msg=role_updated");
+        exit;
+    }
+    // --- EVENT MANAGEMENT METHODS ---
+
+    // Route: /admin/events
+    public function events()
+    {
+        $eventModel = new \App\Models\Event();
+        $events = $eventModel->getAll(); // Fetches both past and future
+        require_once __DIR__ . '/../../views/admin/manage_events.php';
+    }
+
+    // Route: /admin/addEvent
+    public function addEvent()
+    {
+        require_once __DIR__ . '/../../views/admin/add_event.php';
+    }
+
+    // Route: /admin/processAddEvent
+    public function processAddEvent()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/admin/events");
+            exit;
+        }
+
+        \App\Core\Security::verifyCsrf();
+
+        $title = trim(htmlspecialchars($_POST['title']));
+        $description = trim(htmlspecialchars($_POST['description']));
+        $location = trim(htmlspecialchars($_POST['location']));
+
+        // Ensure date is formatted correctly for MySQL DATETIME
+        $eventDate = date('Y-m-d H:i:s', strtotime($_POST['event_date']));
+
+        $imageUrl = 'default_thumb.jpg';
+
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $tmpPath = $_FILES['image']['tmp_name'];
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $tmpPath);
+            finfo_close($finfo);
+
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+            if (!in_array($mimeType, $allowedTypes)) {
+                die("Security Error: Invalid image format.");
+            }
+
+            $extension = explode('/', $mimeType)[1];
+            $fileName = 'event_' . uniqid() . '.' . $extension;
+            $destination = __DIR__ . '/../../assets/images/' . $fileName;
+
+            if (move_uploaded_file($tmpPath, $destination)) {
+                $imageUrl = $fileName;
+            }
+        }
+
+        $eventModel = new \App\Models\Event();
+        if ($eventModel->create($title, $description, $eventDate, $location, $imageUrl)) {
+            $notifModel = new \App\Models\Notification();
+            $notifModel->broadcast("New Event Scheduled: " . $title, "/event");
+            header("Location: " . BASE_URL . "/admin/events?msg=event_added");
+            exit;
+        } else {
+            die("Database Error: Could not create event.");
+        }
+    }
+
+    // Route: /admin/deleteEvent
+    public function deleteEvent()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/admin/events");
+            exit;
+        }
+
+        \App\Core\Security::verifyCsrf();
+        $eventId = intval($_POST['event_id']);
+
+        $eventModel = new \App\Models\Event();
+        $eventModel->delete($eventId);
+
+        header("Location: " . BASE_URL . "/admin/events?msg=event_deleted");
         exit;
     }
 }

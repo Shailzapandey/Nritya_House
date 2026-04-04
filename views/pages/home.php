@@ -6,7 +6,7 @@
             <h1 class="text-gradient">Welcome to Nritya House</h1>
             <p>Learn dance from world-class instructors. Join live sessions or explore our extensive video library.</p>
             <div class="hero-buttons">
-                <a href="classes.php" class="btn btn-primary">
+                <a href="<?php echo BASE_URL; ?>/classes" class="btn btn-primary">
                     <i class="fa-solid fa-play"></i> Start Learning
                 </a>
                 <a href="live_classes.php" class="btn btn-outline">

@@ -34,7 +34,7 @@ if (isset($_SESSION['user_id'])) {
     </form>
 
     <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-        Don't have an account? <a href="register.php" style="color: #a855f7; text-decoration: none;">Sign up</a>
+        Don't have an account? <a href="<?php echo BASE_URL; ?>/auth/register" style="color: #a855f7; text-decoration: none;">Sign up</a>
     </p>
 </div>
 

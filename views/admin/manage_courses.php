@@ -21,6 +21,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
         <h2 style="font-size: 2rem; color: var(--text-dark);">Manage Course Catalog</h2>
         <a href="<?php echo BASE_URL; ?>/admin/users" class="btn btn-outline"><i class="fa-solid fa-users"></i> Manage Users</a>
+        <a href="<?php echo BASE_URL; ?>/admin/events" class="btn btn-outline"><i class="fa-solid fa-calendar"></i> Manage Events</a>
     </div>
 
     <div style="margin-bottom: 20px;">

@@ -15,6 +15,14 @@ class GamificationService
         $this->db = Database::getInstance()->getConnection();
     }
 
+    // NEW: The method your controller was looking for
+    public function logDailyActivity($userId)
+    {
+        $stmt = $this->db->prepare("INSERT IGNORE INTO user_activity_logs (user_id, activity_date) VALUES (?, CURDATE())");
+        return $stmt->execute([$userId]);
+    }
+
+    // EXISTING: Your streak calculator
     public function calculateCurrentStreak($userId)
     {
         $stmt = $this->db->prepare("SELECT activity_date FROM user_activity_logs WHERE user_id = ? ORDER BY activity_date DESC");

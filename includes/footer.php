@@ -1,28 +1,48 @@
-</main> <footer>
-    <div class="container" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
-        <div style="flex: 1; min-width: 250px;">
-            <div class="logo" style="margin-bottom: 10px;">Nritya House</div>
-            <p>Learn dance from world-class instructors, anytime, anywhere.</p>
+</main>
+<footer style="background-color: #0f172a; color: #94a3b8; padding: 60px 0 20px; margin-top: auto; font-family: system-ui, sans-serif;">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; border-bottom: 1px solid #1e293b; padding-bottom: 40px;">
+
+            <div>
+                <div class="logo" style="font-size: 1.5rem; font-weight: bold; color: white; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-fire-flame-curved" style="color: #ec4899;"></i> Nritya House
+                </div>
+                <p style="line-height: 1.6; font-size: 0.95rem;">Elevating the art of dance through world-class digital instruction and community engagement.</p>
+            </div>
+
+            <div>
+                <h4 style="color: white; font-size: 1.1rem; margin-bottom: 20px;">Explore</h4>
+                <ul style="list-style: none; padding: 0; line-height: 2.2;">
+                    <li><a href="<?php echo BASE_URL; ?>/course" style="color: inherit; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#ec4899'" onmouseout="this.style.color='inherit'">Course Catalog</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/instructor" style="color: inherit; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#ec4899'" onmouseout="this.style.color='inherit'">Our Masters</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/event" style="color: inherit; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#ec4899'" onmouseout="this.style.color='inherit'">Upcoming Events</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 style="color: white; font-size: 1.1rem; margin-bottom: 20px;">Student Portal</h4>
+                <ul style="list-style: none; padding: 0; line-height: 2.2;">
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <li><a href="<?php echo BASE_URL; ?>/dashboard" style="color: inherit; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#ec4899'" onmouseout="this.style.color='inherit'">My Dashboard</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>/community" style="color: inherit; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#ec4899'" onmouseout="this.style.color='inherit'">Community Board</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>/profile" style="color: inherit; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#ec4899'" onmouseout="this.style.color='inherit'">Profile Settings</a></li>
+                    <?php else: ?>
+                        <li><a href="<?php echo BASE_URL; ?>/auth/login" style="color: inherit; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#ec4899'" onmouseout="this.style.color='inherit'">Student Login</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>/auth/register" style="color: inherit; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#ec4899'" onmouseout="this.style.color='inherit'">Create Account</a></li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+
         </div>
-        <div style="flex: 1; min-width: 150px;">
-            <h4 style="color: white; margin-bottom: 15px;">Platform</h4>
-            <ul style="list-style: none; padding: 0; line-height: 2;">
-                <li><a href="#" style="color: inherit; text-decoration: none;">About Us</a></li>
-                <li><a href="#" style="color: inherit; text-decoration: none;">Instructors</a></li>
-            </ul>
+
+        <div style="text-align: center; margin-top: 30px; font-size: 0.85rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px;">
+            <div>&copy; <?php echo date("Y"); ?> Nritya House LMS. All rights reserved.</div>
+            <div style="display: flex; gap: 20px;">
+                <span style="opacity: 0.7;">Powered by Master's Level MVC Architecture</span>
+            </div>
         </div>
-        <div style="flex: 1; min-width: 150px;">
-            <h4 style="color: white; margin-bottom: 15px;">Legal</h4>
-            <ul style="list-style: none; padding: 0; line-height: 2;">
-                <li><a href="#" style="color: inherit; text-decoration: none;">Privacy Policy</a></li>
-                <li><a href="#" style="color: inherit; text-decoration: none;">Terms of Service</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="container" style="text-align: center; margin-top: 40px; font-size: 0.8rem; border-top: 1px solid #1e293b; padding-top: 20px;">
-        &copy; <?php echo date("Y"); ?> Nritya House. All rights reserved. Made with ❤️ for dancers worldwide.
     </div>
 </footer>
-
 </body>
+
 </html>
