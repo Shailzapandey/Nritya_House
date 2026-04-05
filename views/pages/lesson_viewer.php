@@ -79,7 +79,7 @@
                                 Already have an account? <a href="<?php echo BASE_URL; ?>/auth/login" style="color: var(--primary); font-weight: bold; text-decoration: none;">Log in</a>
                             </p>
                         <?php else: ?>
-                            <a href="<?php echo BASE_URL; ?>/checkout?class_id=<?php echo $course['class_id']; ?>" class="btn btn-primary" style="font-size: 1.1rem; padding: 12px 30px;"><i class="fa-solid fa-cart-shopping"></i> Purchase Full Course - $49.99</a>
+                            <a href="<?php echo BASE_URL; ?>/checkout?class_id=<?php echo $course['class_id']; ?>" class="btn btn-primary" style="font-size: 1.1rem; padding: 12px 30px;"><i class="fa-solid fa-cart-shopping"></i> Purchase Full Course - Rs.1500</a>
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>

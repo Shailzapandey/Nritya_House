@@ -74,4 +74,25 @@ class Course
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$classId]);
     }
+    public function getById($id)
+    {
+        // This is the query causing the crash; it will work after the ALTER TABLE command
+        $sql = "SELECT 
+            c.class_id, 
+            c.title, 
+            c.style, 
+            c.description, -- This was the missing column
+            c.difficulty_level, 
+            c.duration_weeks, 
+            c.thumbnail_url, 
+            c.instructor_id,
+            i.full_name as instructor_name
+        FROM classes c 
+        LEFT JOIN instructors i ON c.instructor_id = i.instructor_id 
+        WHERE c.class_id = ?";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
 }

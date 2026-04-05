@@ -41,7 +41,7 @@
             <div style="grid-column: 1 / -1; text-align: center; padding: 50px; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
                 <i class="fa-solid fa-folder-open" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
                 <h3 style="color: #666;">No active enrollments.</h3>
-                <p style="margin-top: 10px;"><a href="<?php echo BASE_URL; ?>/classes" style="color: #ec4899; text-decoration: none; font-weight: bold;">Browse the catalog</a> to start learning.</p>
+                <p style="margin-top: 10px;"><a href="<?php echo BASE_URL; ?>/course" style="color: #ec4899; text-decoration: none; font-weight: bold;">Browse the catalog</a> to start learning.</p>
             </div>
         <?php else: ?>
 

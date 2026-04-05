@@ -34,4 +34,24 @@ class CourseController
         // Hand the data off to the view
         require_once __DIR__ . '/../../views/pages/catalog.php';
     }
+    // Route: /course/show?id=X
+    public function show()
+    {
+        $id = intval($_GET['id']);
+        $courseModel = new \App\Models\Course();
+        $course = $courseModel->getById($id); // Ensure this method exists in your Model
+
+        if (!$course) {
+            header("Location: " . BASE_URL . "/course");
+            exit;
+        }
+
+        $has_purchased = false;
+        if (isset($_SESSION['user_id'])) {
+            $paymentModel = new \App\Models\Payment();
+            $has_purchased = $paymentModel->hasPurchased($_SESSION['user_id'], $id);
+        }
+
+        require_once __DIR__ . '/../../views/pages/course_detail.php';
+    }
 }

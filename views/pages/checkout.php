@@ -20,15 +20,15 @@
 
     <div style="display: flex; justify-content: space-between; font-size: 1.2rem; margin-bottom: 10px;">
         <span>Base Price:</span>
-        <span>$<?php echo number_format($basePrice, 2); ?></span>
+        <span>Rs.<?php echo number_format($basePrice, 2); ?></span>
     </div>
     <div style="display: flex; justify-content: space-between; font-size: 1.2rem; color: #ec4899; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 20px;">
         <span>Discount:</span>
-        <span>-$<?php echo number_format($discount, 2); ?></span>
+        <span>-Rs.<?php echo number_format($discount, 2); ?></span>
     </div>
     <div style="display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: bold; margin-bottom: 30px;">
         <span>Total:</span>
-        <span>$<?php echo number_format($finalPrice, 2); ?></span>
+        <span>Rs.<?php echo number_format($finalPrice, 2); ?></span>
     </div>
 
     <form action="<?php echo BASE_URL; ?>/checkout/process" method="POST">

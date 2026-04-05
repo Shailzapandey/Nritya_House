@@ -26,8 +26,8 @@ class CheckoutController
         $lessonModel = new Lesson();
         $course = $lessonModel->getCourseDetails($classId);
 
-        // Base price of course (mocking a $49.99 price tag)
-        $basePrice = 49.99;
+        // Base price of course (mocking a Rs.1500 price tag)
+        $basePrice = 1500.99;
         $discount = 0;
         $couponMessage = '';
 
